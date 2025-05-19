@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Distribeer Garagem</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0; padding: 0;
+      background: #fffbdc;
+    }
+    .top-info {
+      background: #25d366;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 0.5rem;
+      font-weight: bold;
+    }
+    .top-info img {
+      height: 24px;
+    }
+    .top-info a {
+      color: white;
+      text-decoration: none;
+    }
+    header {
+      background: #000;
+      color: #fff;
+      padding: 1rem;
+      text-align: center;
+    }
+    .catalog {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1rem;
+      padding: 1rem;
+    }
+    .product {
+      background: #fff;
+      border-radius: 10px;
+      padding: 1rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+    .product img {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+    }
+    .product h3 {
+      margin: 0.5rem 0;
+      font-size: 1.1rem;
+    }
+    .product p {
+      margin: 0.25rem 0 1rem;
+      font-weight: bold;
+    }
+    .product button {
+      background: #ffd000;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    #cart {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      background: #fff;
+      border: 2px solid #000;
+      padding: 1rem;
+      border-radius: 10px;
+      max-width: 300px;
+      z-index: 100;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+    #cart.expanded {
+      width: 300px;
+    }
+    #message {
+      position: fixed;
+      bottom: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #000;
+      color: #fff;
+      padding: 0.75rem 1.5rem;
+      border-radius: 30px;
+      display: none;
+      animation: bounce 0.6s ease-in-out;
+    }
+    @keyframes bounce {
+      0% { transform: translateX(-50%) scale(0.8); opacity: 0; }
+      50% { transform: translateX(-50%) scale(1.1); opacity: 1; }
+      100% { transform: translateX(-50%) scale(1); }
+    }
+    .whatsapp-btn {
+      background: #25d366;
+      color: white;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 100%;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+    .total {
+      font-weight: bold;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="top-info">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" />
+    <a href="https://wa.me/5551933808238" target="_blank">Pedidos: (51) 93380-8238</a>
+  </div>
+
+  <header>
+    <h1>Distribeer Garagem</h1>
+  </header>
+
+  <div class="catalog" id="catalog"></div>
+
+  <div id="cart" class="cart"><span id="cartIcon">🛒</span></div>
+  <div id="message"></div>
+
+  <script>
+    const products = [
+      { 
+        name: 'Coca Cola 2L', 
+        price: 10.99, 
+        image: 'https://io.convertiez.com.br/m/trimais/shop/products/images/2/medium/refrigerante-coca-cola-original-garrafa-2l_2.jpg' 
+      },
+      { 
+        name: 'Coca Cola Zero 2L', 
+        price: 10.99, 
+        image: 'https://www.clubeextra.com.br/img/uploads/1/913/24935913.jpg' 
+      },
+      { 
+        name: 'Pepsi 2l', 
+        price: 8.99, 
+        image: 'https://mercantilatacado.vtexassets.com/arquivos/ids/168894/653fe6a745b11bc8543d293d.jpg?v=638342834425070000' 
+      },
+      { 
+        name: 'Fruki 2L', 
+        price: 6.99, 
+        image: 'https://zaffari.vtexassets.com/arquivos/ids/252607/1005161-00.jpg?v=638576018241600000' 
+      },
+      { 
+        name: 'Fresc 2l', 
+        price: 5.49, 
+        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs0ZtzZcEfkHJ8PaBEJDQZX7rrZCdhxlv7Ew&s' 
+      }
+    ];
+
+    const catalogEl = document.getElementById('catalog');
+    const cartEl = document.getElementById('cart');
+    const messageEl = document.getElementById('message');
+    let cart = [];
+
+    function showMessage(text) {
+      messageEl.innerText = text;
+      messageEl.style.display = 'block';
+      setTimeout(() => messageEl.style.display = 'none', 2000);
+    }
+
+    function renderCatalog() {
+      products.forEach((product, index) => {
+        const div = document.createElement('div');
+        div.className = 'product';
+        div.innerHTML = `
+          <img src="${product.image}" alt="${product.name}" />
+          <h3>${product.name}</h3>
+          <p>R$ ${product.price.toFixed(2).replace('.', ',')}</p>
+          <button onclick="addToCart(${index})">Adicionar</button>
+        `;
+        catalogEl.appendChild(div);
+      });
+    }
+
+    function addToCart(index) {
+      const product = products[index];
+      const existing = cart.find(item => item.name === product.name);
+      if (existing) {
+        existing.qty++;
+      } else {
+        cart.push({ ...product, qty: 1 });
+      }
+      updateCartUI();
+      showMessage("Produto adicionado com sucesso!");
+    }
+
+    function removeFromCart(index) {
+      cart.splice(index, 1);
+      updateCartUI();
+      showMessage("Item removido do carrinho!");
+    }
+
+    function updateCartUI() {
+      if(cart.length === 0) {
+        cartEl.classList.remove('expanded');
+        cartEl.innerHTML = '<span id="cartIcon">🛒</span>';
+        return;
+      }
+
+      cartEl.classList.add('expanded');
+      let html = '<h2>Carrinho</h2><ul>';
+      let total = 0;
+      cart.forEach((item, index) => {
+        html += `<li>
+          ${item.name} x${item.qty} - R$ ${(item.price * item.qty).toFixed(2).replace('.', ',')}
+          <button onclick="removeFromCart(${index})" style="margin-left:8px;color:red;background:none;border:none;cursor:pointer;">✖</button>
+        </li>`;
+        total += item.price * item.qty;
+      });
+      html += `</ul><div class="total">Total: R$ ${total.toFixed(2).replace('.', ',')}</div>`;
+      html += `<button class="whatsapp-btn" onclick="finalizePurchase()">Finalizar no WhatsApp</button>`;
+      cartEl.innerHTML = html;
+    }
+
+    function finalizePurchase() {
+      const text = cart.map(item => `${item.name} x${item.qty}`).join('%0A');
+      const total = cart.reduce((acc, item) => acc + item.price * item.qty, 0).toFixed(2);
+      const url = `https://wa.me/5551933808238?text=Olá! Gostaria de pedir:%0A${text}%0A%0ATotal: R$ ${total.replace('.', ',')}`;
+      window.open(url, '_blank');
+    }
+
+    renderCatalog();
+  </script>
+</body>
+</html>
