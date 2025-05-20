@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+<!DOCTYPE html><html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -32,12 +31,6 @@
       color: #fff;
       padding: 1rem;
       text-align: center;
-    }
-    .catalog {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 1rem;
-      padding: 1rem;
     }
     .product {
       background: #fff;
@@ -121,45 +114,26 @@
   <div class="top-info">
     <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" />
     <a href="https://wa.me/5551933808238" target="_blank">Pedidos: (51) 93380-8238</a>
-  </div>
-
-  <header>
+  </div>  <header>
     <h1>Distribeer Garagem</h1>
-  </header>
-
-  <div class="catalog" id="catalog"></div>
-
-  <div id="cart" class="cart"><span id="cartIcon">🛒</span></div>
-  <div id="message"></div>
-
-  <script>
-    const products = [
-      { 
-        name: 'Coca Cola 2L', 
-        price: 10.99, 
-        image: 'https://io.convertiez.com.br/m/trimais/shop/products/images/2/medium/refrigerante-coca-cola-original-garrafa-2l_2.jpg' 
-      },
-      { 
-        name: 'Coca Cola Zero 2L', 
-        price: 10.99, 
-        image: 'https://www.clubeextra.com.br/img/uploads/1/913/24935913.jpg' 
-      },
-      { 
-        name: 'Pepsi 2l', 
-        price: 8.99, 
-        image: 'https://mercantilatacado.vtexassets.com/arquivos/ids/168894/653fe6a745b11bc8543d293d.jpg?v=638342834425070000' 
-      },
-      { 
-        name: 'Charrua 2L', 
-        price: 6.99, 
-        image: 'https://zaffari.vtexassets.com/arquivos/ids/253005/1010798-00.jpg?v=638579643811700000' 
-      },
-      { 
-        name: 'Fresc 2l', 
-        price: 5.49, 
-        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs0ZtzZcEfkHJ8PaBEJDQZX7rrZCdhxlv7Ew&s' 
-      }
-    ];
+  </header>  <div id="catalog"></div>  <div id="cart" class="cart"><span id="cartIcon">🛒</span></div>
+  <div id="message"></div>  <script>
+    const categories = {
+      'Cervejas': [
+        { name: 'Polar 473ml', price: 4.99, image: 'https://produtos.vipcommerce.com.br/250x250/60085e09-02bc-4486-9086-46e61498f561.jpg' },
+        { name: 'Budweiser 473ml', price: 6.49, image: 'https://prezunic.vtexassets.com/arquivos/ids/192919/6568d76ee1d9f5b4beb95f1c.jpg?v=638369665146630000' },
+        { name: 'Heineken 473ml', price: 7.49, image: 'https://prezunic.vtexassets.com/arquivos/ids/193357/6568d7c1e1d9f5b4beb960b0.jpg?v=638369665989400000' }
+      ],
+      'Refrigerantes': [
+        { name: 'Coca-Cola 2L', price: 10.99, image: 'https://io.convertiez.com.br/m/trimais/shop/products/images/2/medium/refrigerante-coca-cola-original-garrafa-2l_2.jpg' },
+{ name: 'Coca-Cola Zero 2L', price: 10.99, image: 'https://www.clubeextra.com.br/img/uploads/1/913/24935913.jpg' },
+{ name: 'Pepsi 2L', price: 8.99, image: 'https://mercantilatacado.vtexassets.com/arquivos/ids/168894/653fe6a745b11bc8543d293d.jpg?v=638342834425070000%27' },
+      ],
+      'Águas': [
+        { name: 'Água sem gás 500ml', price: 1.49, image: 'https://io.convertiez.com.br/m/superpaguemenos/shop/products/images/15890/medium/agua-mineral-crystal-sem-gas-500ml_89544.png' },
+        { name: 'Água Com gás 500ml', price: 1.89, image: 'https://loja.cristalselect.com.br/cdn/shop/files/Prancheta1copiar.jpg?v=1731591790' }
+      ]
+    };
 
     const catalogEl = document.getElementById('catalog');
     const cartEl = document.getElementById('cart');
@@ -173,21 +147,31 @@
     }
 
     function renderCatalog() {
-      products.forEach((product, index) => {
-        const div = document.createElement('div');
-        div.className = 'product';
-        div.innerHTML = `
-          <img src="${product.image}" alt="${product.name}" />
-          <h3>${product.name}</h3>
-          <p>R$ ${product.price.toFixed(2).replace('.', ',')}</p>
-          <button onclick="addToCart(${index})">Adicionar</button>
-        `;
-        catalogEl.appendChild(div);
-      });
+      catalogEl.innerHTML = '';
+      for (const category in categories) {
+        const section = document.createElement('div');
+        section.innerHTML = `<h2 style="padding: 0 1rem; margin-top: 2rem;">${category}</h2>
+                             <div class="catalog-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; padding: 1rem;"></div>`;
+        const grid = section.querySelector('.catalog-grid');
+
+        categories[category].forEach((product, index) => {
+          const div = document.createElement('div');
+          div.className = 'product';
+          div.innerHTML = `
+            <img src="${product.image}" alt="${product.name}" />
+            <h3>${product.name}</h3>
+            <p>R$ ${product.price.toFixed(2).replace('.', ',')}</p>
+            <button onclick="addToCartFromCategory('${category}', ${index})">Adicionar</button>
+          `;
+          grid.appendChild(div);
+        });
+
+        catalogEl.appendChild(section);
+      }
     }
 
-    function addToCart(index) {
-      const product = products[index];
+    function addToCartFromCategory(category, index) {
+      const product = categories[category][index];
       const existing = cart.find(item => item.name === product.name);
       if (existing) {
         existing.qty++;
@@ -234,6 +218,5 @@
     }
 
     renderCatalog();
-  </script>
-</body>
+  </script></body>
 </html>
