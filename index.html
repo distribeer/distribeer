@@ -154,6 +154,10 @@
     </select>
   </div>
 
+<div id="delivery-info" style="text-align:center; background:#ffd000; padding:10px; font-weight:bold; margin: 0 1rem 1rem 1rem; border-radius: 8px; color:#000;">
+  Frete grátis para o bairro Moradas da Hípica em pedidos acima de R$30,00. Para os demais bairro, consulte pelo Whatsapp.
+</div>
+
   <div id="catalog"></div>
 
   <div id="cart" class="cart"><span id="cartIcon">🛒</span></div>
@@ -263,6 +267,11 @@
       });
       html += `</ul><div class="total">Total: R$ ${total.toFixed(2).replace('.', ',')}</div>`;
       html += `<button class="whatsapp-btn" onclick="finalizePurchase()">Finalizar no WhatsApp</button>`;
+html += `<div style="margin-top:10px; background:#fff8a3; padding:10px; border-radius:6px; font-size:0.9rem; text-align:center;">
+  <strong>Delivery:</strong><br/>
+  Frete grátis para o bairro Moradas da Hípica em pedidos acima de R$30,00..<br/>
+  Para os demais bairro, consulte pelo Whatsapp.
+</div>`;
       cartEl.innerHTML = html;
     }
 
