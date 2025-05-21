@@ -8,7 +8,7 @@
     body {
       font-family: Arial, sans-serif;
       margin: 0; padding: 0;
-      background: #fffbdc;
+      background: #f4f4f4;
     }
     .top-info {
       background: #25d366;
@@ -28,8 +28,8 @@
       text-decoration: none;
     }
     header {
-      background: #000;
-      color: #fff;
+      background: #000000;
+      color: #FFF;
       padding: 1rem;
       text-align: center;
     }
@@ -37,48 +37,68 @@
       margin: 1rem;
       text-align: center;
     }
-    select {
+    select, input[type="text"] {
       padding: 0.5rem;
       font-size: 1rem;
       border-radius: 5px;
       border: 1px solid #ccc;
       min-width: 200px;
+      margin: 5px;
     }
-    .product {
-      background: #fff;
-      border-radius: 10px;
-      padding: 1rem;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-      text-align: center;
+   .product {
+  background: #fff;
+  border-radius: 10px;
+  padding: 1rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  text-align: center;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 240px; /* <-- NOVO: padroniza a altura dos cards */
+}
+    .promo-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: red;
+      color: white;
+      padding: 2px 6px;
+      font-size: 0.75rem;
+      border-radius: 4px;
     }
     .product img {
-      width: 100%;
-      max-width: 150px;
-      height: auto;
-      border-radius: 8px;
-      margin-bottom: 0.5rem;
-    }
-    .product h3 {
-      margin: 0.5rem 0;
-      font-size: 1rem;
-    }
-    .product p {
-      margin: 0.25rem 0 1rem;
-      font-weight: bold;
-      font-size: 0.9rem;
-    }
-    .product button {
-      background: #ffd000;
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: bold;
-      font-size: 0.9rem;
-    }
-    #catalog {
-      padding: 0 1rem 2rem 1rem;
-    }
+  width: auto;
+  height: 150px;
+  max-width: 100%;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto 0.5rem auto;
+  border-radius: 8px;
+}
+
+   .product h3 {
+  font-size: 1rem;
+  margin: 0.5rem 0;
+  min-height: 2.2em;
+}
+
+.product p {
+  font-weight: bold;
+  font-size: 1.5rem; /* ⬅ Aumentado para destacar o preço */
+  margin: 0.3rem 0 0.6rem;
+}
+
+.product button {
+  margin-top: 0.3rem; /* ⬅ Aproxima o botão */
+  background: #25d366;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
     .catalog-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -152,11 +172,18 @@
     <select id="categoryFilter" onchange="filterCatalog()">
       <option value="all">Todas</option>
     </select>
+
+    <input type="text" id="searchInput" placeholder="Buscar produto..." oninput="filterCatalog()" />
+
+    <div style="margin-top: 10px;">
+      <button onclick="togglePromotions()" id="promoBtn" style="background:red; color:white; padding: 0.6rem 1.2rem; border: none; border-radius: 30px; font-weight: bold; font-size: 1rem; box-shadow: 0 2px 6px rgba(0,0,0,0.2); cursor: pointer; transition: background 0.3s ease;">Ver Promoções</button>
+
+    </div>
   </div>
 
-<div id="delivery-info" style="text-align:center; background:#ffd000; padding:10px; font-weight:bold; margin: 0 1rem 1rem 1rem; border-radius: 8px; color:#000;">
-  Frete grátis para o bairro Moradas da Hípica em pedidos acima de R$30,00. Para os demais bairro, consulte pelo Whatsapp.
-</div>
+  <div id="delivery-info" style="text-align:center; background:#000000; padding:10px; font-weight:bold; margin: 0 1rem 1rem 1rem; border-radius: 8px; color:#FFF;">
+    Frete grátis para o bairro Moradas da Hípica em pedidos acima de R$30,00. Para os demais bairros, consulte pelo Whatsapp.
+  </div>
 
   <div id="catalog"></div>
 
@@ -165,28 +192,28 @@
 
   <script>
     const categories = {
-     'Cervejas': [
-        { name: 'Polar 473ml', price: 4.99, image: 'https://produtos.vipcommerce.com.br/250x250/60085e09-02bc-4486-9086-46e61498f561.jpg' },
+      'Cervejas': [
+        { name: 'Polar 473ml', price: 4.99, image: 'https://produtos.vipcommerce.com.br/250x250/60085e09-02bc-4486-9086-46e61498f561.jpg', promo: true },
         { name: 'Budweiser 473ml', price: 6.49, image: 'https://prezunic.vtexassets.com/arquivos/ids/192919/6568d76ee1d9f5b4beb95f1c.jpg?v=638369665146630000' },
         { name: 'Heineken 473ml', price: 7.49, image: 'https://prezunic.vtexassets.com/arquivos/ids/193357/6568d7c1e1d9f5b4beb960b0.jpg?v=638369665989400000' }
       ],
       'Refrigerantes': [
-        { name: 'Coca-Cola 2L', price: 10.99, image: 'https://io.convertiez.com.br/m/trimais/shop/products/images/2/medium/refrigerante-coca-cola-original-garrafa-2l_2.jpg' },
-{ name: 'Coca-Cola Zero 2L', price: 10.99, image: 'https://www.clubeextra.com.br/img/uploads/1/913/24935913.jpg' },
-{ name: 'Pepsi 2L', price: 8.99, image: 'https://mercantilatacado.vtexassets.com/arquivos/ids/168894/653fe6a745b11bc8543d293d.jpg?v=638342834425070000%27' },
+        { name: 'Coca-Cola 2L', price: 10.99, image: 'https://io.convertiez.com.br/m/trimais/shop/products/images/2/medium/refrigerante-coca-cola-original-garrafa-2l_2.jpg', promo: true },
+        { name: 'Coca-Cola Zero 2L', price: 10.99, image: 'https://www.clubeextra.com.br/img/uploads/1/913/24935913.jpg' },
+        { name: 'Pepsi 2L', price: 8.99, image: 'https://mercantilatacado.vtexassets.com/arquivos/ids/168894/653fe6a745b11bc8543d293d.jpg?v=638342834425070000' },
       ],
       'Águas': [
         { name: 'Água sem gás 500ml', price: 1.49, image: 'https://io.convertiez.com.br/m/superpaguemenos/shop/products/images/15890/medium/agua-mineral-crystal-sem-gas-500ml_89544.png' },
-        { name: 'Água Com gás 500ml', price: 1.89, image: 'https://loja.cristalselect.com.br/cdn/shop/files/Prancheta1copiar.jpg?v=1731591790' }
+        { name: 'Água Com gás 500ml', price: 1.89, image: 'https://loja.cristalselect.com.br/cdn/shop/files/Prancheta1copiar.jpg?v=1731591790', promo: true }
       ]
     };
 
-
+    let showPromotionsOnly = false;
     const catalogEl = document.getElementById('catalog');
     const cartEl = document.getElementById('cart');
     const messageEl = document.getElementById('message');
     const filterEl = document.getElementById('categoryFilter');
-
+    const searchEl = document.getElementById('searchInput');
     let cart = [];
 
     function showMessage(text) {
@@ -195,7 +222,6 @@
       setTimeout(() => messageEl.style.display = 'none', 2000);
     }
 
-    // Popula o filtro com categorias
     function populateFilter() {
       for (const category in categories) {
         const option = document.createElement('option');
@@ -206,6 +232,7 @@
     }
 
     function renderCatalog(filteredCategory = 'all') {
+      const search = searchEl.value.toLowerCase();
       catalogEl.innerHTML = '';
       for (const category in categories) {
         if (filteredCategory !== 'all' && category !== filteredCategory) continue;
@@ -215,9 +242,13 @@
         const grid = section.querySelector('.catalog-grid');
 
         categories[category].forEach((product, index) => {
+          if (showPromotionsOnly && !product.promo) return;
+          if (!product.name.toLowerCase().includes(search)) return;
+
           const div = document.createElement('div');
           div.className = 'product';
           div.innerHTML = `
+            ${product.promo ? '<div class="promo-badge">Promoção</div>' : ''}
             <img src="${product.image}" alt="${product.name}" />
             <h3>${product.name}</h3>
             <p>R$ ${product.price.toFixed(2).replace('.', ',')}</p>
@@ -226,8 +257,23 @@
           grid.appendChild(div);
         });
 
-        catalogEl.appendChild(section);
+        if (grid.children.length > 0) catalogEl.appendChild(section);
       }
+    }
+
+    function togglePromotions() {
+      showPromotionsOnly = !showPromotionsOnly;
+      const btn = document.getElementById('promoBtn');
+      if (showPromotionsOnly) {
+        btn.textContent = 'Ver Tudo';
+        btn.style.background = 'black';
+        btn.style.color = 'white';
+      } else {
+        btn.textContent = 'Ver Promoções';
+        btn.style.background = 'red';
+        btn.style.color = 'white';
+      }
+      renderCatalog(filterEl.value);
     }
 
     function addToCartFromCategory(category, index) {
@@ -267,11 +313,11 @@
       });
       html += `</ul><div class="total">Total: R$ ${total.toFixed(2).replace('.', ',')}</div>`;
       html += `<button class="whatsapp-btn" onclick="finalizePurchase()">Finalizar no WhatsApp</button>`;
-html += `<div style="margin-top:10px; background:#fff8a3; padding:10px; border-radius:6px; font-size:0.9rem; text-align:center;">
-  <strong>Delivery:</strong><br/>
-  Frete grátis para o bairro Moradas da Hípica em pedidos acima de R$30,00..<br/>
-  Para os demais bairro, consulte pelo Whatsapp.
-</div>`;
+      html += `<div style="margin-top:10px; background:#fff8a3; padding:10px; border-radius:6px; font-size:0.9rem; text-align:center;">
+        <strong>Delivery:</strong><br/>
+        Frete grátis para o bairro Moradas da Hípica em pedidos acima de R$30,00.<br/>
+        Para os demais bairros, consulte pelo Whatsapp.
+      </div>`;
       cartEl.innerHTML = html;
     }
 
@@ -283,11 +329,9 @@ html += `<div style="margin-top:10px; background:#fff8a3; padding:10px; border-r
     }
 
     function filterCatalog() {
-      const selected = filterEl.value;
-      renderCatalog(selected);
+      renderCatalog(filterEl.value);
     }
 
-    // Inicializa
     populateFilter();
     renderCatalog();
   </script>
