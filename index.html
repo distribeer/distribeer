@@ -205,19 +205,21 @@
 'Cervejas Long Neck': [
         { name: 'Budweiser 330ml', price: 6.99, image: 'https://carrefourbrfood.vtexassets.com/arquivos/ids/134558686/cerveja-budweiser-american-lager-330ml-long-neck-1.jpg?v=638364442432970000' },
         { name: 'Skol Beats Senses 269ml', price: 6.99, image: 'https://superprix.vteximg.com.br/arquivos/ids/215390-600-600/7891991301138---Drink-Pronto-Beats-Senses-Long-Neck-269ml---1.jpg?v=638248636668970000' },
-        { name: 'Corona 330ml', price: 7.49, image: 'https://www.imigrantesbebidas.com.br/bebida/images/products/full/305-cerveja-corona-long-neck-330ml.jpg' },
+        { name: 'Corona 330ml', price: 7.49, image: 'https://www.imigrantesbebidas.com.br/bebida/images/products/full/305-cerveja-corona-long-neck-330ml.jpg', unavailable: true  },
       ],
 
 
       'Refrigerantes': [
-        { name: 'Coca-Cola 2L', price: 10.99, image: 'https://io.convertiez.com.br/m/trimais/shop/products/images/2/medium/refrigerante-coca-cola-original-garrafa-2l_2.jpg', promo: true },
+        { name: 'Coca-Cola 2L', price: 10.99, image: 'https://io.convertiez.com.br/m/trimais/shop/products/images/2/medium/refrigerante-coca-cola-original-garrafa-2l_2.jpg'},
         { name: 'Coca-Cola Zero 2L', price: 10.99, image: 'https://www.clubeextra.com.br/img/uploads/1/913/24935913.jpg' },
         { name: 'Pepsi 2L', price: 8.99, image: 'https://mercantilatacado.vtexassets.com/arquivos/ids/168894/653fe6a745b11bc8543d293d.jpg?v=638342834425070000' },
+ { name: 'Charrua 2L', price: 6.99, image: 'https://zaffari.vtexassets.com/arquivos/ids/253005/1010798-00.jpg?v=638579643811700000' },
+ { name: 'Fresc 2L', price: 5.49, image: 'https://http2.mlstatic.com/D_NQ_NP_636339-MLB54194731720_032023-O.webp', promo: true  },
       ],
 
       'Águas': [
         { name: 'Água sem gás 500ml', price: 1.49, image: 'https://io.convertiez.com.br/m/superpaguemenos/shop/products/images/15890/medium/agua-mineral-crystal-sem-gas-500ml_89544.png' },
-        { name: 'Água Com gás 500ml', price: 1.89, image: 'https://loja.cristalselect.com.br/cdn/shop/files/Prancheta1copiar.jpg?v=1731591790', promo: true }
+        { name: 'Água Com gás 500ml', price: 1.89, image: 'https://loja.cristalselect.com.br/cdn/shop/files/Prancheta1copiar.jpg?v=1731591790', available: false }
       ]
     };
 
@@ -244,35 +246,45 @@
       }
     }
 
-    function renderCatalog(filteredCategory = 'all') {
-      const search = searchEl.value.toLowerCase();
-      catalogEl.innerHTML = '';
-      for (const category in categories) {
-        if (filteredCategory !== 'all' && category !== filteredCategory) continue;
-        const section = document.createElement('div');
-        section.innerHTML = `<h2 style="padding: 0 1rem; margin-top: 2rem;">${category}</h2>
-                             <div class="catalog-grid"></div>`;
-        const grid = section.querySelector('.catalog-grid');
+function renderCatalog(filteredCategory = 'all') {
+  const search = searchEl.value.toLowerCase();
+  catalogEl.innerHTML = '';
+  for (const category in categories) {
+    if (filteredCategory !== 'all' && category !== filteredCategory) continue;
+    const section = document.createElement('div');
+    section.innerHTML = `<h2 style="padding: 0 1rem; margin-top: 2rem;">${category}</h2>
+                         <div class="catalog-grid"></div>`;
+    const grid = section.querySelector('.catalog-grid');
 
-        categories[category].forEach((product, index) => {
-          if (showPromotionsOnly && !product.promo) return;
-          if (!product.name.toLowerCase().includes(search)) return;
+    categories[category].forEach((product, index) => {
+      if (showPromotionsOnly && !product.promo) return;
+      if (!product.name.toLowerCase().includes(search)) return;
 
-          const div = document.createElement('div');
-          div.className = 'product';
-          div.innerHTML = `
-            ${product.promo ? '<div class="promo-badge">Promoção</div>' : ''}
-            <img src="${product.image}" alt="${product.name}" />
-            <h3>${product.name}</h3>
-            <p>R$ ${product.price.toFixed(2).replace('.', ',')}</p>
-            <button onclick="addToCartFromCategory('${category}', ${index})">Adicionar</button>
-          `;
-          grid.appendChild(div);
-        });
+      const div = document.createElement('div');
+      div.className = 'product';
+      
+      // Se o produto estiver indisponível, substitui o botão de "Adicionar" por "Indisponível"
+      const buttonHTML = product.unavailable
+        ? `<button style="background: #ccc; cursor: not-allowed;" disabled>Indisponível</button>`
+        : `<button onclick="addToCartFromCategory('${category}', ${index})">Adicionar</button>`;
+      
+      div.innerHTML = `
+        ${product.promo ? '<div class="promo-badge">Promoção</div>' : ''}
+        <img src="${product.image}" alt="${product.name}" />
+        <h3>${product.name}</h3>
+        <p>R$ ${product.price.toFixed(2).replace('.', ',')}</p>
+        ${buttonHTML}
+      `;
+      
+      grid.appendChild(div);
+    });
 
-        if (grid.children.length > 0) catalogEl.appendChild(section);
-      }
-    }
+    if (grid.children.length > 0) catalogEl.appendChild(section);
+  }
+}
+
+
+
 
     function togglePromotions() {
       showPromotionsOnly = !showPromotionsOnly;
@@ -307,32 +319,46 @@
       showMessage("Item removido do carrinho!");
     }
 
-    function updateCartUI() {
-      if(cart.length === 0) {
-        cartEl.classList.remove('expanded');
-        cartEl.innerHTML = '<span id="cartIcon">🛒</span>';
-        return;
-      }
-
-      cartEl.classList.add('expanded');
-      let html = '<h2>Carrinho</h2><ul>';
-      let total = 0;
-      cart.forEach((item, index) => {
-        html += `<li>
-          ${item.name} x${item.qty} - R$ ${(item.price * item.qty).toFixed(2).replace('.', ',')}
-          <button onclick="removeFromCart(${index})" style="margin-left:8px;color:red;background:none;border:none;cursor:pointer;">✖</button>
-        </li>`;
-        total += item.price * item.qty;
-      });
-      html += `</ul><div class="total">Total: R$ ${total.toFixed(2).replace('.', ',')}</div>`;
-      html += `<button class="whatsapp-btn" onclick="finalizePurchase()">Finalizar no WhatsApp</button>`;
-      html += `<div style="margin-top:10px; background:#fff8a3; padding:10px; border-radius:6px; font-size:0.9rem; text-align:center;">
-        <strong>Delivery:</strong><br/>
-        Frete grátis para o bairro Moradas da Hípica em pedidos acima de R$30,00.<br/>
-        Para os demais bairros, consulte pelo Whatsapp.
-      </div>`;
-      cartEl.innerHTML = html;
+    // Função para atualizar o carrinho
+  function updateCartUI() {
+    if (cart.length === 0) {
+      cartEl.classList.remove('expanded');
+      cartEl.innerHTML = '<span id="cartIcon">🛒</span>';
+      return;
     }
+
+
+    cartEl.classList.add('expanded');
+    let html = '<h2>Carrinho</h2><ul>';
+    let total = 0;
+    cart.forEach((item, index) => {
+      html += `<li>
+        ${item.name} 
+        <input type="number" value="${item.qty}" min="1" style="width: 40px; margin-left: 10px;" 
+          onchange="updateQuantity(${index}, this.value)" />
+        - R$ ${(item.price * item.qty).toFixed(2).replace('.', ',')}
+        <button onclick="removeFromCart(${index})" style="margin-left:8px;color:red;background:none;border:none;cursor:pointer;">✖</button>
+      </li>`;
+      total += item.price * item.qty;
+    });
+    html += `</ul><div class="total">Total: R$ ${total.toFixed(2).replace('.', ',')}</div>`;
+    html += `<button class="whatsapp-btn" onclick="finalizePurchase()">Finalizar no WhatsApp</button>`;
+    html += `<div style="margin-top:10px; background:#fff8a3; padding:10px; border-radius:6px; font-size:0.9rem; text-align:center;">
+      <strong>Delivery:</strong><br/>
+      Frete grátis para o bairro Moradas da Hípica em pedidos acima de R$30,00.<br/>
+      Para os demais bairros, consulte pelo Whatsapp.
+    </div>`;
+    cartEl.innerHTML = html;
+  }
+
+
+function updateQuantity(index, newQty) {
+    const newQuantity = parseInt(newQty);
+    if (isNaN(newQuantity) || newQuantity < 1) return; // Se a quantidade for inválida, não faz nada
+    cart[index].qty = newQuantity;
+    updateCartUI();
+  }
+
 
     function finalizePurchase() {
       const text = cart.map(item => `${item.name} x${item.qty}`).join('%0A');
