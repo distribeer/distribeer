@@ -1,418 +1,1466 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Distribeer Garagem</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0; padding: 0;
-      background: #f4f4f4;
-    }
-    .top-info {
-      background: #25d366;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      padding: 0.5rem;
-      font-weight: bold;
-    }
-    .top-info img {
-      height: 24px;
-    }
-    .top-info a {
-      color: white;
-      text-decoration: none;
-    }
-    header {
-      background: #000000;
-      color: #FFF;
-      padding: 1rem;
-      text-align: center;
-    }
-    #filter {
-      margin: 1rem;
-      text-align: center;
-    }
-    select, input[type="text"] {
-      padding: 0.5rem;
-      font-size: 1rem;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      min-width: 200px;
-      margin: 5px;
-    }
-   .product {
-  background: #fff;
-  border-radius: 10px;
-  padding: 1rem;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-  text-align: center;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  min-height: 240px; /* <-- NOVO: padroniza a altura dos cards */
-}
-    .promo-badge {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: red;
-      color: white;
-      padding: 2px 6px;
-      font-size: 0.75rem;
-      border-radius: 4px;
-    }
-    .product img {
-  width: auto;
-  height: 150px;
-  max-width: 100%;
-  object-fit: contain;
-  display: block;
-  margin: 0 auto 0.5rem auto;
-  border-radius: 8px;
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Distribeer Garagem</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Variáveis de cores */
+        :root {
+            --primary-color: #FFCC00; /* Amarelo */
+            --secondary-color: #000000; /* Preto */
+            --accent-color: #00C853; /* Verde para botões de ação */
+            --text-color: #000000; /* Texto preto */
+            --text-light: #FFFFFF; /* Texto branco */
+            --background-light: #FFFFFF; /* Fundo branco */
+            --promo-color: #FF0000; /* Vermelho para promoções */
+            --unavailable-color: #FF5252; /* Vermelho para indisponível */
+            --border-radius: 8px; /* Arredondamento de bordas */
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+        }
 
-   .product h3 {
-  font-size: 1rem;
-  margin: 0.5rem 0;
-  min-height: 2.2em;
-}
+        /* Reset e estilos gerais */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-.product p {
-  font-weight: bold;
-  font-size: 1.5rem; /* ⬅ Aumentado para destacar o preço */
-  margin: 0.3rem 0 0.6rem;
-}
+        body {
+            background-color: #f5f5f5;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
 
-.product button {
-  margin-top: 0.3rem; /* ⬅ Aproxima o botão */
-  background: #25d366;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 0.9rem;
-}
-    .catalog-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-      gap: 1rem;
-    }
-    #cart {
-      position: fixed;
-      top: 1rem;
-      right: 1rem;
-      background: #fff;
-      border: 2px solid #000;
-      padding: 1rem;
-      border-radius: 10px;
-      max-width: 300px;
-      z-index: 100;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-      transition: width 0.3s ease;
-    }
-    #cart.expanded {
-      width: 300px;
-    }
-    #message {
-      position: fixed;
-      bottom: 1rem;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #000;
-      color: #fff;
-      padding: 0.75rem 1.5rem;
-      border-radius: 30px;
-      display: none;
-      animation: bounce 0.6s ease-in-out;
-      font-size: 1rem;
-    }
-    @keyframes bounce {
-      0% { transform: translateX(-50%) scale(0.8); opacity: 0; }
-      50% { transform: translateX(-50%) scale(1.1); opacity: 1; }
-      100% { transform: translateX(-50%) scale(1); }
-    }
-    .whatsapp-btn {
-      background: #25d366;
-      color: white;
-      padding: 0.5rem 1rem;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      width: 100%;
-      font-weight: bold;
-      margin-top: 10px;
-      font-size: 1rem;
-    }
-    .total {
-      font-weight: bold;
-      margin-top: 10px;
-      font-size: 1.1rem;
-    }
-  </style>
+        /* Cabeçalho */
+        header {
+            background-color: var(--primary-color);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo-container {
+            flex: 1;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+
+        .logo-text-small {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+
+        .header-contact {
+            flex: 2;
+            text-align: center;
+        }
+
+        .whatsapp-link {
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 1.1rem; /* Aumentado para melhor visibilidade */
+            text-shadow: 0px 0px 1px rgba(0,0,0,0.2); /* Adicionado para melhorar legibilidade */
+        }
+
+        .whatsapp-link i {
+            color: #25D366;
+            font-size: 1.3em; /* Aumentado para melhor visibilidade */
+            filter: drop-shadow(0px 0px 1px rgba(0,0,0,0.3)); /* Adicionado para destacar o ícone */
+        }
+
+        .cart-icon {
+            flex: 1;
+            text-align: right;
+        }
+
+        #cart-button {
+            background: var(--background-light);
+            border: 2px solid var(--secondary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            cursor: pointer;
+        }
+
+        #cart-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--accent-color);
+            color: var(--text-light);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        /* Barra de pesquisa e filtros */
+        .search-bar {
+            background-color: var(--primary-color);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            flex-wrap: wrap;
+            gap: 10px;
+            border-bottom: 2px solid var(--secondary-color);
+        }
+
+        .filter-container, .search-container, .cart-button-container {
+            flex: 1;
+            min-width: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            height: 70px;
+        }
+
+        .filter-container label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        #category-filter, #search-input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid var(--secondary-color);
+            border-radius: var(--border-radius);
+            background-color: var(--background-light);
+            height: 42px;
+        }
+
+        #view-cart-button {
+            width: 100%;
+            padding: 10px;
+            background-color: var(--accent-color);
+            color: var(--text-light);
+            border: none;
+            border-radius: var(--border-radius);
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            height: 42px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #view-cart-button:hover {
+            background-color: #00a844;
+        }
+
+        /* Informações de frete */
+        .shipping-info {
+            background-color: var(--secondary-color);
+            color: var(--text-light);
+            padding: 10px 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        /* Seções de produtos */
+        .product-section {
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .product-section h2 {
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+            padding-bottom: 5px;
+            border-bottom: 3px solid var(--primary-color);
+            display: inline-block;
+        }
+
+        /* Carrossel de produtos */
+        .products-carousel {
+            position: relative;
+            width: 100%;
+            overflow-x: auto;
+            white-space: nowrap;
+            padding: 10px 0;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary-color) #f1f1f1;
+        }
+
+        .products-carousel::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .products-carousel::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .products-carousel::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 10px;
+        }
+
+        .products-carousel::-webkit-scrollbar-thumb:hover {
+            background: #e0b800;
+        }
+
+        .products-row {
+            display: inline-flex;
+            gap: 15px;
+            padding: 5px;
+        }
+
+        /* Cards de produtos */
+        .product-card {
+            background-color: var(--background-light);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            position: relative;
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: inline-flex;
+            flex-direction: column;
+            width: 200px;
+            min-width: 200px;
+            height: 350px;
+            white-space: normal;
+            vertical-align: top;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .promo-tag {
+            position: absolute;
+            top: 10px;
+            left: 0;
+            background-color: var(--promo-color);
+            color: var(--text-light);
+            padding: 5px 10px;
+            font-size: 0.8em;
+            font-weight: bold;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: contain;
+            padding: 15px;
+            background-color: #f9f9f9;
+        }
+
+        .product-card h3 {
+text-align: center;
+            padding: 10px 15px;
+            font-size: 1em;
+            flex-grow: 1;
+        }
+
+        .product-card .price {
+text-align: center;
+            padding: 0 15px 10px;
+            font-weight: bold;
+            font-size: 1.2em;
+            color: var(--secondary-color);
+        }
+
+        .button-container {
+            width: 100%;
+            height: 42px; /* Altura fixa para todos os botões */
+        }
+
+        .add-to-cart, .unavailable {
+            width: 100%;
+            height: 100%;
+            padding: 10px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .add-to-cart {
+            background-color: var(--accent-color);
+            color: var(--text-light);
+        }
+
+        .add-to-cart:hover {
+            background-color: #00a844;
+        }
+
+        .unavailable {
+            background-color: var(--unavailable-color);
+            color: var(--text-light);
+            cursor: not-allowed;
+        }
+
+        /* Modal do Carrinho */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: var(--background-light);
+            margin: 10% auto;
+            width: 80%;
+            max-width: 600px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            animation: modalFadeIn 0.3s;
+        }
+
+        @keyframes modalFadeIn {
+            from {opacity: 0; transform: translateY(-50px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+
+        .modal-header {
+            background-color: var(--primary-color);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+        }
+
+        .modal-header h2 {
+            color: var(--secondary-color);
+        }
+
+        .close {
+            color: var(--secondary-color);
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .cart-item-info {
+            flex: 3;
+        }
+
+        .cart-item-quantity {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .quantity-btn {
+            background-color: var(--primary-color);
+            border: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .cart-item-price {
+            flex: 1;
+            text-align: right;
+            font-weight: bold;
+        }
+
+        .cart-total {
+            margin-top: 20px;
+            text-align: right;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .modal-footer {
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid #eee;
+        }
+
+        #clear-cart, #checkout {
+            padding: 10px 20px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        #clear-cart {
+            background-color: #f5f5f5;
+            color: var(--secondary-color);
+            border: 1px solid #ddd;
+        }
+
+        #checkout {
+            background-color: var(--accent-color);
+            color: var(--text-light);
+        }
+
+        /* Rodapé */
+        footer {
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+            padding: 20px;
+            margin-top: 40px;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo-small {
+            height: 30px;
+        }
+
+        .footer-info {
+            text-align: right;
+        }
+
+        .footer-info p {
+            margin: 5px 0;
+            font-size: 0.9em;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .search-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filter-container, .search-container, .cart-button-container {
+                width: 100%;
+                margin-bottom: 10px;
+                height: auto;
+            }
+            
+            .product-card {
+                width: 160px;
+                min-width: 160px;
+            }
+            
+            .modal-content {
+                width: 95%;
+                margin: 5% auto;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .footer-info {
+                text-align: center;
+                margin-top: 15px;
+            }
+        }
+
+        /* Animações e efeitos */
+        .add-to-cart:active {
+            transform: scale(0.95);
+        }
+
+        #cart-button:active, #view-cart-button:active {
+            transform: scale(0.95);
+        }
+
+        /* Estilo para o botão de rolagem para o topo */
+        .scroll-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .scroll-top.visible {
+            opacity: 1;
+        }
+
+        /* Estilos para notificações */
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            border-radius: 4px;
+            color: white;
+            font-weight: bold;
+            z-index: 1000;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: transform 0.3s, opacity 0.3s;
+        }
+
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .notification.success {
+            background-color: #00C853;
+        }
+
+        .notification.error {
+            background-color: #FF5252;
+        }
+
+        /* Estilo para carrinho vazio */
+        .empty-cart {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-style: italic;
+        }
+
+        /* Setas de navegação para o carrossel */
+        .carousel-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+        }
+
+        .carousel-nav.prev {
+            left: 10px;
+        }
+
+        .carousel-nav.next {
+            right: 10px;
+        }
+    </style>
 </head>
 <body>
-  <div class="top-info">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" />
-    <a href="https://wa.me/5551933808238" target="_blank">Pedidos: (51) 93380-8238</a>
-  </div>
+    <header>
+        <div class="logo-container">
+            <div class="logo-text">Distribeer Garagem</div>
+        </div>
+        <div class="header-contact">
+            <a href="https://wa.me/5551933808238" class="whatsapp-link">
+                <i class="fab fa-whatsapp"></i> Pedidos: (51) 93380-8238
+            </a>
+        </div>
+        <div class="cart-icon">
+            <button id="cart-button">
+                <i class="fas fa-shopping-cart"></i>
+                <span id="cart-count">0</span>
+            </button>
+        </div>
+    </header>
 
-  <header>
-    <h1>Distribeer Garagem</h1>
-  </header>
-
-  <div id="filter">
-    <label for="categoryFilter">Filtrar por categoria:</label>
-    <select id="categoryFilter" onchange="filterCatalog()">
-      <option value="all">Todas</option>
-    </select>
-
-    <input type="text" id="searchInput" placeholder="Buscar produto..." oninput="filterCatalog()" />
-
-    <div style="margin-top: 10px;">
-      <button onclick="togglePromotions()" id="promoBtn" style="background:red; color:white; padding: 0.6rem 1.2rem; border: none; border-radius: 30px; font-weight: bold; font-size: 1rem; box-shadow: 0 2px 6px rgba(0,0,0,0.2); cursor: pointer; transition: background 0.3s ease;">Ver Promoções</button>
-
+    <div class="search-bar">
+        <div class="filter-container">
+            <label for="category-filter">Filtrar por categoria:</label>
+            <select id="category-filter">
+                <option value="all">Todas</option>
+                <option value="promocoes">Leve mais, pague menos</option>
+                <option value="cervejas-latao">Cervejas Latão</option>
+                <option value="cervejas-long-neck">Cervejas Long Neck</option>
+                <option value="refrigerantes">Refrigerantes</option>
+                <option value="vinhos">Vinhos</option>
+                <option value="aguas">Águas</option>
+                <option value="carvao-lenha">Carvão e Lenha</option>
+                <option value="diversos">Vodkas, energéticos e itens básicos</option>
+            </select>
+        </div>
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Buscar produto...">
+        </div>
+        <div class="cart-button-container">
+            <button id="view-cart-button">
+                <i class="fas fa-shopping-cart"></i> Ver Carrinho (<span id="cart-count-button">0</span>)
+            </button>
+        </div>
     </div>
-  </div>
 
-  <div id="delivery-info" style="text-align:center; background:#000000; padding:10px; font-weight:bold; margin: 0 1rem 1rem 1rem; border-radius: 8px; color:#FFF;">
-    Frete grátis para o bairro Moradas da Hípica em pedidos acima de R$30,00. Para os demais bairros, consulte pelo Whatsapp.
-  </div>
+    <div class="shipping-info">
+        <p>Frete grátis para o bairro Moradas da Hípica em pedidos acima de R$30,00. Para os demais bairros, consulte pelo Whatsapp.</p>
+    </div>
 
-  <div id="catalog"></div>
+    <main>
+        <!-- Seção de Promoções -->
+        <section id="promocoes" class="product-section">
+            <h2>Leve mais, pague menos:</h2>
+            <div class="products-carousel">
+                <div class="products-row">
+                    <div class="product-card promo">
+                        <div class="promo-tag">Promoção</div>
+                        <img src="https://gbarbosa.vtexassets.com/arquivos/ids/211596/6552668d8d0743e14888ec84.jpg?v=638354958253700000" alt="3un Latão Schin 473ml">
+                        <h3>3un Latão Schin 473ml</h3>
+                        <p class="price">R$ 10,99</p>
+                        <div class="button-container">
+                            <button class="add-to-cart" data-id="promo1" data-name="3un Latão Schin 473ml" data-price="10.99">Adicionar</button>
+                        </div>
+                    </div>
+                    <div class="product-card promo">
+                        <div class="promo-tag">Promoção</div>
+                        <img src="https://apoioentrega.vteximg.com.br/arquivos/ids/827966/217038_0.png?v=638568202675300000" alt="3un Latão Original 473ml">
+                        <h3>3un Latão Original 473ml</h3>
+                        <p class="price">R$ 18,00</p>
+                        <div class="button-container">
+                            <button class="add-to-cart" data-id="promo2" data-name="3un Latão Original 473ml" data-price="18.00">Adicionar</button>
+                        </div>
+                    </div>
+                    <div class="product-card promo">
+                        <div class="promo-tag">Promoção</div>
+                        <img src="https://prezunic.vtexassets.com/arquivos/ids/192919/6568d76ee1d9f5b4beb95f1c.jpg?v=638369665146630000" alt="3un Latão Budweiser 473ml">
+                        <h3>3un Latão Budweiser 473ml</h3>
+                        <p class="price">R$ 18,00</p>
+                        <div class="button-container">
+                            <button class="add-to-cart" data-id="promo3" data-name="3un Latão Budweiser 473ml" data-price="18.00">Adicionar</button>
+                        </div>
+                    </div>
+                    <div class="product-card promo">
+                        <div class="promo-tag">Promoção</div>
+                        <img src="https://prezunic.vtexassets.com/arquivos/ids/193357/6568d7c1e1d9f5b4beb960b0.jpg?v=638369665989400000" alt="3un Latão Heineken 473ml">
+                        <h3>3un Latão Heineken 473ml</h3>
+                        <p class="price">R$ 18,99</p>
+                        <div class="button-container">
+                            <button class="add-to-cart" data-id="promo4" data-name="3un Latão Heineken 473ml" data-price="18.99">Adicionar</button>
+                        </div>
+                    </div>
+                    <div class="product-card promo">
+                        <div class="promo-tag">Promoção</div>
+                        <img src="https://superprix.vteximg.com.br/arquivos/ids/214321/lok4.png?v=638228612088500000" alt="3un Latão Lokal 473ml">
+                        <h3>3un Latão Lokal 473ml</h3>
+                        <p class="price">R$ 10,99</p>
+                        <div class="button-container">
+                            <button class="unavailable" disabled>Indisponível</button>
+                        </div>
+                    </div>
+                    <div class="product-card promo">
+                        <div class="promo-tag">Promoção</div>
+                        <img src="https://superprix.vteximg.com.br/arquivos/ids/215390-600-600/7891991301138---Drink-Pronto-Beats-Senses-Long-Neck-269ml---1.jpg?v=638248636668970000" alt="3un Skol Beats Senses 269ml">
+                        <h3>3un Skol Beats Senses 269ml</h3>
+                        <p class="price">R$ 19,49</p>
+                        <div class="button-container">
+                            <button class="add-to-cart" data-id="promo6" data-name="3un Skol Beats Senses 269ml" data-price="19.49">Adicionar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-  <div id="cart" class="cart"><span id="cartIcon">🛒</span></div>
-  <div id="message"></div>
+        <!-- Seção de Cervejas Latão -->
+        <section id="cervejas-latao" class="product-section">
+            <h2>Cervejas Latão</h2>
+            <div class="products-carousel">
+                <div class="products-row">
+                    <div class="product-card">
+                        <img src="https://gbarbosa.vtexassets.com/arquivos/ids/211596/6552668d8d0743e14888ec84.jpg?v=638354958253700000" alt="Schin 473ml">
+                        <h3>Schin 473ml</h3>
+                        <p class="price">R$ 3,99</p>
+                        <div class="button-container">
+                            <button class="add-to-cart" data-id="latao1" data-name="Schin 473ml" data-price="3.99">Adicionar</button>
+                        </div>
+                    </div>
+                    <div class="product-card">
+                        <img src="https://prezunic.vtexassets.com/arquivos/ids/192919/6568d76ee1d9f5b4beb95f1c.jpg?v=638369665146630000" alt="Budweiser 473ml">
+                        <h3>Budweiser 473ml</h3>
+                        <p class="price">R$ 6,49</p>
+                        <div class="button-container">
+                            <button class="add-to-cart" data-id="latao2" data-name="Budweiser 473ml" data-price="6.49">Adicionar</button>
+                        </div>
+                    </div>
+                    <div class="product-card">
+                        <img src="https://prezunic.vtexassets.com/arquivos/ids/193357/6568d7c1e1d9f5b4beb960b0.jpg?v=638369665989400000" alt="Heineken 473ml">
+                        <h3>Heineken 473ml</h3>
+                        <p class="price">R$ 7,49</p>
+                        <div class="button-container">
+                            <button class="add-to-cart" data-id="latao3" data-name="Heineken 473ml" data-price="7.49">Adicionar</button>
+                        </div>
+                    </div>
+                    <div class="product-card">
+                        <img src="https://apoioentrega.vteximg.com.br/arquivos/ids/827966/217038_0.png?v=638568202675300000" alt="Original 473ml">
+                        <h3>Original 473ml</h3>
+                        <p class="price">R$ 6,49</p>
+                        <div class="button-container">
+                            <button class="add-to-cart" data-id="latao4" data-name="Original 473ml" data-price="6.49">Adicionar</button>
+                        </div>
+                    </div>
+                    <div class="product-card">
+                        <img src="https://superprix.vteximg.com.br/arquivos/ids/214321/lok4.png?v=638228612088500000" alt="Lokal 473ml">
+                        <h3>Lokal 473ml</h3>
+                        <p class="price">R$ 3,99</p>
+                        <div class="button-container">
+                            <button class="add-to-cart" data-id="latao5" data-name="Lokal 473ml" data-price="3.99">Adicionar</button>
+                        </div>
+                    </div>
+                    <div class="product-card">
+                        <img src="https://produtos.vipcommerce.com.br/250x250/60085e09-02bc-4486-9086-46e61498f561.jpg" alt="Polar 473ml">
+                        <h3>Polar 473ml</h3>
+                        <p class="price">R$ 4,99</p>
+                        <div class="button-container">
+                            <button class="add-to-cart" data-id="latao6" data-name="Polar 473ml" data-price="4.99">Adicionar</button>
+                        </div>
+                    </div>
+                    <div class="product-card">
+                        <img src="https://choppbrahmaexpress.vtexassets.com/arquivos/ids/157313-800-auto?v=637891011246970000&width=800&height=auto&aspect=true" alt="Skol 473ml">
+                        <h3>Skol 473ml</h3>
+                        <p class="price">R$ 5,99</p>
+                        <div class="button-container">
+                            <button class="add-to-cart" data-id="latao7" data-name="Skol 473ml" data-price="5.99">Adicionar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-  <script>
-    const categories = {
+        <!-- Seção de Cervejas Long Neck -->
+        <section id="cervejas-long-neck" class="product-section">
+            <h2>Cervejas Long Neck</h2>
+            <div class="products-carousel">
+                <div class="products-row">
+                    <div class="product-card">
+                        <img src="https://carrefourbrfood.vtexassets.com/arquivos/ids/134558686/cerveja-budweiser-american-lager-330ml-long-neck-1.jpg?v=638364442432970000" alt="Budweiser 330ml">
+                        <h3>Budweiser 330ml</h3>
+                        <p class="price">R$ 6,99</p>
+                        <div class="button-container">
+                            <button class="add-to-cart" data-id="long1" data-name="Budweiser 330ml" data-price="6.99">Adicionar</button>
+                        </div>
+                    </div>
+                    <div class="product-card">
+                        <img src="https://superprix.vteximg.com.br/arquivos/ids/215390-600-600/7891991301138---Drink-Pronto-Beats-Senses-Long-Neck-269ml---1.jpg?v=638248636668970000" alt="Skol Beats Senses 269ml">
+                        <h3>Skol Beats Senses 269ml</h3>
+                        <p class="price">R$ 6,99</p>
+                        <div class="button-container">
+                            <button class="add-to-cart" data-id="long2" data-name="Skol Beats Senses 269ml" data-price="6.99">Adicionar</button>
+                        </div>
+                    </div>
+                    <div class="product-card">
+                        <img src="https://www.imigrantesbebidas.com.br/bebida/images/products/full/305-cerveja-corona-long-neck-330ml.jpg" alt="Corona 330ml">
+                        <h3>Corona 330ml</h3>
+                        <p class="price">R$ 7,49</p>
+                        <div class="button-container">
+                            <button class="add-to-cart" disabled>Adicionar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
- 'Leve mais, pague menos:': [
-{ name: '3un Latão Schin 473ml', price: 10.99, image: 'https://gbarbosa.vtexassets.com/arquivos/ids/211596/6552668d8d0743e14888ec84.jpg?v=638354958253700000',promo: true },
-{ name: '3un Latão Original 473ml', price: 18.00, image: 'https://apoioentrega.vteximg.com.br/arquivos/ids/827966/217038_0.png?v=638568202675300000',promo: true },
-{ name: '3un Latão Budweiser 473ml', price: 18.00, image: 'https://prezunic.vtexassets.com/arquivos/ids/192919/6568d76ee1d9f5b4beb95f1c.jpg?v=638369665146630000',promo: true },
-{ name: '3un Latão Heineken 473ml', price: 18.99, image: 'https://prezunic.vtexassets.com/arquivos/ids/193357/6568d7c1e1d9f5b4beb960b0.jpg?v=638369665989400000',promo: true},
- { name: '3un Latão Lokal 473ml', price: 10.99, image: 'https://superprix.vteximg.com.br/arquivos/ids/214321/lok4.png?v=638228612088500000', unavailable: true, promo: true },
- { name: '3un Skol Beats Senses 269ml', price: 19.49, image: 'https://superprix.vteximg.com.br/arquivos/ids/215390-600-600/7891991301138---Drink-Pronto-Beats-Senses-Long-Neck-269ml---1.jpg?v=638248636668970000', promo: true },
-{ name: 'Chopp 1 litro', price: 10.00, image: 'https://cervejariaschmitt.com.br/wp-content/uploads/2020/03/WhatsApp-Image-2025-01-14-at-14.20.54-3.jpeg', promo: true },
+        <!-- Seção de Refrigerantes -->
+        <section id="refrigerantes" class="product-section">
+            <h2>Refrigerantes</h2>
+            <div class="products-carousel">
+                <div class="products-row">
+                    <div class="product-card">
+                        <img src="https://io.convertiez.com.br/m/trimais/shop/products/images/2/medium/refrigerante-coca-cola-original-garrafa-2l_2.jpg" alt="Coca-Cola 2L">
+                        <h3>Coca-Cola 2L</h3>
+                        <p class="price">R$ 10,99</p>
+                        <div class="button-container">
+                            <button class="add-to-cart" data-id="refri1" data-name="Coca-Cola 2L" data-price="10.99">Adicionar</button>
+                        </div>
+                    </div>
+                    <div class="product-card">
+                        <img src="https://www.clubeextra.com.br/img/uploads/1/913/24935913.jpg" alt="Coca-Cola Zero 2L">
+                        <h3>Coca-Cola Zero 2L</h3>
+                        <p class="price">R$ 10,99</p>
+                        <div class="button-container">
+                            <button class="add-to-cart" data-id="refri2" data-name="Coca-Cola Zero 2L" data-price="10.99">Adicionar</button>
+                        </div>
+                    </div>
+                    <div class="product-card">
+                        <img src="https://mercantilatacado.vtexassets.com/arquivos/ids/168894/653fe6a745b11bc8543d293d.jpg?v=638342834425070000" alt="Pepsi 2L">
+                        <h3>Pepsi 2L</h3>
+                        <p class="price">R$ 8,99</p>
+                        <div class="button-container">
+                            <button class="add-to-cart" data-id="refri3" data-name="Pepsi 2L" data-price="8.99">Adicionar</button>
+                        </div>
+                    </div>
+                    <div class="product-card">
+                        <img src="https://zaffari.vtexassets.com/arquivos/ids/253005/1010798-00.jpg?v=638579643811700000" alt="Charrua 2L">
+                        <h3>Charrua 2L</h3>
+                        <p class="price">R$ 6,99</p>
+                        <div class="button-container">
+                            <button class="add-to-cart" data-id="refri4" data-name="Charrua 2L" data-price="6.99">Adicionar</button>
+                        </div>
+                    </div>
+                    <div class="product-card">
+                        <img src="https://http2.mlstatic.com/D_NQ_NP_636339-MLB54194731720_032023-O.webp" alt="Fresc 2L">
+                        <h3>Fresc 2L</h3>
+                        <p class="price">R$ 5,49</p>
+                        <div class="button-container">
+                            <button class="add-to-cart" data-id="refri5" data-name="Fresc 2L" data-price="5.49">Adicionar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
+        <!-- Seção de Vinhos -->
+        <section id="vinhos" class="product-section">
+            <h2>Vinhos</h2>
+            <div class="products-carousel">
+                <div class="products-row">
+                    <div class="product-card promo">
+                        <div class="promo-tag">Promoção</div>
+                        <img src="https://www.vinicolalovatel.com.br/uploads/fotos_produtos/20231004_f1bec3f4.jpg" alt="Lovatel 750ml">
+                        <h3>Lovatel 750ml</h3>
+                        <p class="price">R$ 15,90</p>
+                        <div class="button-container">
+                            <button class="add-to-cart" data-id="vinho1" data-name="Lovatel 750ml" data-price="15.90">Adicionar</button>
+                        </div>
+                    </div>
+                    <div class="product-card promo">
+                        <div class="promo-tag">Promoção</div>
+                        <img src="https://www.vinicolalovatel.com.br/uploads/fotos_produtos/20220321_la6558ef.png" alt="Lovatel 1,5l">
+                        <h3>Lovatel 1,5l</h3>
+                        <p class="price">R$ 16,90</p>
+                        <div class="button-container">
+                            <button class="add-to-cart" data-id="vinho2" data-name="Lovatel 1,5l" data-price="16.90">Adicionar</button>
+                        </div>
+                    </div>
+                    <div class="product-card">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZXGLUdBvBJMInNyt15sBf1XQxL_4h7QNeMQ&s" alt="Vinho Colonial 1,5l">
+                        <h3>Vinho Colonial 1,5l</h3>
+                        <p class="price">R$ 10,00</p>
+                        <div class="button-container">
+                            <button class="add-to-cart" data-id="vinho3" data-name="Vinho Colonial 1,5l" data-price="10.00">Adicionar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
+        <!-- Seção de Águas -->
+        <section id="aguas" class="product-section">
+            <h2>Águas</h2>
+            <div class="products-carousel">
+                <div class="products-row">
+                    <div class="product-card">
+                        <img src="https://io.convertiez.com.br/m/superpaguemenos/shop/products/images/15890/medium/agua-mineral-crystal-sem-gas-500ml_89544.png" alt="Água sem gás 500ml">
+                        <h3>Água sem gás 500ml</h3>
+                        <p class="price">R$ 1,49</p>
+                        <div class="button-container">
+                            <button class="add-to-cart" data-id="agua1" data-name="Água sem gás 500ml" data-price="1.49">Adicionar</button>
+                        </div>
+                    </div>
+                    <div class="product-card">
+                        <img src="https://loja.cristalselect.com.br/cdn/shop/files/Prancheta1copiar.jpg?v=1731591790" alt="Água Com gás 500ml">
+                        <h3>Água Com gás 500ml</h3>
+                        <p class="price">R$ 1,89</p>
+                        <div class="button-container">
+                            <button class="add-to-cart" data-id="agua2" data-name="Água Com gás 500ml" data-price="1.89">Adicionar</button>
+                        </div>
+                    </div>
+                    <div class="product-card promo">
+                        <div class="promo-tag">Promoção</div>
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7wWKzlWeJqHCmgFdfxB9baoyP4YpPJCII4w&s" alt="Água C/ Gás 1.5l">
+                        <h3>Água C/ Gás 1.5l</h3>
+                        <p class="price">R$ 4,99</p>
+                        <div class="button-container">
+                            <button class="add-to-cart" data-id="agua3" data-name="Água C/ Gás 1.5l" data-price="4.99">Adicionar</button>
+                        </div>
+                    </div>
+                    <div class="product-card promo">
+                        <div class="promo-tag">Promoção</div>
+                        <img src="https://carrefourbrfood.vtexassets.com/arquivos/ids/18904690/agua-mineral-sem-gas-crystal-5-litros-1.jpg?v=637590231146570000" alt="Água 5L">
+                        <h3>Água 5L</h3>
+                        <p class="price">R$ 7,99</p>
+                        <div class="button-container">
+                            <button class="add-to-cart" data-id="agua4" data-name="Água 5L" data-price="7.99">Adicionar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
+        <!-- Seção de Carvão e Lenha -->
+        <section id="carvao-lenha" class="product-section">
+            <h2>Carvão e Lenha</h2>
+            <div class="products-carousel">
+                <div class="products-row">
+                    <div class="product-card">
+                        <img src="https://www.imigrantesbebidas.com.br/bebida/images/products/full/66002-carvao-4kg.20230918124343.jpg" alt="Carvão 4kg">
+                        <h3>Carvão 4kg</h3>
+                        <p class="price">R$ 25,00</p>
+                        <div class="button-container">
+                            <button class="add-to-cart" data-id="carvao1" data-name="Carvão 4kg" data-price="25.00">Adicionar</button>
+                        </div>
+                    </div>
+                    <div class="product-card promo">
+                        <div class="promo-tag">Promoção</div>
+                        <img src="https://www.imigrantesbebidas.com.br/bebida/images/products/full/66003-carvao-8kg.20230918124556.jpg" alt="Carvão 8kg">
+                        <h3>Carvão 8kg</h3>
+                        <p class="price">R$ 30,00</p>
+                        <div class="button-container">
+                            <button class="add-to-cart" data-id="carvao2" data-name="Carvão 8kg" data-price="30.00">Adicionar</button>
+                        </div>
+                    </div>
+                    <div class="product-card">
+                        <img src="https://biolenhas.com.br/wp-content/uploads/2021/09/PARA-DEFUMAR-CHURRASCO17.jpg" alt="Lenha Pct Grande">
+                        <h3>Lenha Pct Grande</h3>
+                        <p class="price">R$ 30,00</p>
+                        <div class="button-container">
+                            <button class="add-to-cart" data-id="lenha1" data-name="Lenha Pct Grande" data-price="30.00">Adicionar</button>
+                        </div>
+                    </div>
+                    <div class="product-card promo">
+                        <div class="promo-tag">Promoção</div>
+                        <img src="https://biolenhas.com.br/wp-content/uploads/2021/09/PARA-DEFUMAR-CHURRASCO17.jpg" alt="2 Pct Lenha Grande">
+                        <h3>2 Pct Lenha Grande</h3>
+                        <p class="price">R$ 50,00</p>
+                        <div class="button-container">
+                            <button class="add-to-cart" data-id="lenha2" data-name="2 Pct Lenha Grande" data-price="50.00">Adicionar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
- ],
+        <!-- Seção de Vodkas, energéticos e itens básicos -->
+        <section id="diversos" class="product-section">
+            <h2>Vodkas, energéticos e itens básicos para o dia a dia</h2>
+            <div class="products-carousel">
+                <div class="products-row">
+                    <div class="product-card promo">
+                        <div class="promo-tag">Promoção</div>
+                        <img src="https://ibassets.com.br/ib.item.image.large/l-15f9c986cb7747de8e5b52b71f675df4.png" alt="Confira no Whatsapp">
+                        <h3>Confira no Whatsapp</h3>
+                        <p class="price">R$ 0,00</p>
+                        <div class="button-container">
+                            <button class="add-to-cart" data-id="diversos1" data-name="Confira no Whatsapp" data-price="0.00">Adicionar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
 
+    <!-- Modal do Carrinho -->
+    <div id="cart-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Seu Carrinho</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="cart-items">
+                    <!-- Itens do carrinho serão adicionados aqui -->
+                </div>
+                <div class="cart-total">
+                    <p>Total: <span id="cart-total-price">R$ 0,00</span></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="clear-cart">Limpar Carrinho</button>
+                <button id="checkout">Finalizar Pedido</button>
+            </div>
+        </div>
+    </div>
 
-      'Cervejas Latão': [
-        { name: 'Polar 473ml', price: 4.99, image: 'https://produtos.vipcommerce.com.br/250x250/60085e09-02bc-4486-9086-46e61498f561.jpg' },
-        { name: 'Budweiser 473ml', price: 6.49, image: 'https://prezunic.vtexassets.com/arquivos/ids/192919/6568d76ee1d9f5b4beb95f1c.jpg?v=638369665146630000' },
-        { name: 'Heineken 473ml', price: 7.49, image: 'https://prezunic.vtexassets.com/arquivos/ids/193357/6568d7c1e1d9f5b4beb960b0.jpg?v=638369665989400000' },
-       { name: 'Schin 473ml', price: 3.99, image: 'https://gbarbosa.vtexassets.com/arquivos/ids/211596/6552668d8d0743e14888ec84.jpg?v=638354958253700000' },
-       { name: 'Original 473ml', price: 6.49, image: 'https://apoioentrega.vteximg.com.br/arquivos/ids/827966/217038_0.png?v=638568202675300000' },
-       { name: 'Lokal 473ml', price: 3.99, image: 'https://superprix.vteximg.com.br/arquivos/ids/214321/lok4.png?v=638228612088500000' },
-       { name: 'Skol 473ml', price: 5.99, image: 'https://choppbrahmaexpress.vtexassets.com/arquivos/ids/157313-800-auto?v=637891011246970000&width=800&height=auto&aspect=true' },
-      ],
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <div class="logo-text-small">Distribeer Garagem</div>
+            </div>
+            <div class="footer-info">
+                <p>&copy; 2025 Distribeer Garagem - Todos os direitos reservados</p>
+                <p>Beba com moderação. Não vendemos para menores de 18 anos.</p>
+            </div>
+        </div>
+    </footer>
 
-'Cervejas Long Neck': [
-        { name: 'Budweiser 330ml', price: 6.99, image: 'https://carrefourbrfood.vtexassets.com/arquivos/ids/134558686/cerveja-budweiser-american-lager-330ml-long-neck-1.jpg?v=638364442432970000' },
-        { name: 'Skol Beats Senses 269ml', price: 6.99, image: 'https://superprix.vteximg.com.br/arquivos/ids/215390-600-600/7891991301138---Drink-Pronto-Beats-Senses-Long-Neck-269ml---1.jpg?v=638248636668970000' },
-        { name: 'Corona 330ml', price: 7.49, image: 'https://www.imigrantesbebidas.com.br/bebida/images/products/full/305-cerveja-corona-long-neck-330ml.jpg', unavailable: true  },
-      ],
+    <script>
+        // Variáveis globais
+        let cart = [];
+        let productData = [];
 
+        // Inicialização quando o DOM estiver carregado
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configurar listeners de eventos
+            setupEventListeners();
+            
+            // Verificar se há um carrinho salvo no localStorage
+            loadCartFromLocalStorage();
+            
+            // Atualizar contador do carrinho
+            updateCartCount();
+        });
 
-      'Refrigerantes': [
-        { name: 'Coca-Cola 2L', price: 10.99, image: 'https://io.convertiez.com.br/m/trimais/shop/products/images/2/medium/refrigerante-coca-cola-original-garrafa-2l_2.jpg'},
-        { name: 'Coca-Cola Zero 2L', price: 10.99, image: 'https://www.clubeextra.com.br/img/uploads/1/913/24935913.jpg' },
-        { name: 'Pepsi 2L', price: 8.99, image: 'https://mercantilatacado.vtexassets.com/arquivos/ids/168894/653fe6a745b11bc8543d293d.jpg?v=638342834425070000' },
- { name: 'Charrua 2L', price: 6.99, image: 'https://zaffari.vtexassets.com/arquivos/ids/253005/1010798-00.jpg?v=638579643811700000' },
- { name: 'Fresc 2L', price: 5.49, image: 'https://http2.mlstatic.com/D_NQ_NP_636339-MLB54194731720_032023-O.webp'},
-      ],
+        // Configurar listeners de eventos
+        function setupEventListeners() {
+            // Botões de adicionar ao carrinho
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('add-to-cart')) {
+                    const productId = e.target.getAttribute('data-id');
+                    const productName = e.target.getAttribute('data-name');
+                    const productPrice = parseFloat(e.target.getAttribute('data-price'));
+                    
+                    addToCart(productId, productName, productPrice);
+                }
+            });
+            
+            // Abrir modal do carrinho (botão pequeno no cabeçalho)
+            const cartButton = document.getElementById('cart-button');
+            if (cartButton) {
+                cartButton.addEventListener('click', openCartModal);
+            }
+            
+            // Abrir modal do carrinho (botão grande na barra de pesquisa)
+            const viewCartButton = document.getElementById('view-cart-button');
+            if (viewCartButton) {
+                viewCartButton.addEventListener('click', openCartModal);
+            }
+            
+            // Fechar modal do carrinho
+            const closeButton = document.querySelector('.close');
+            if (closeButton) {
+                closeButton.addEventListener('click', closeCartModal);
+            }
+            
+            // Fechar modal ao clicar fora
+            window.addEventListener('click', function(e) {
+                const modal = document.getElementById('cart-modal');
+                if (e.target === modal) {
+                    closeCartModal();
+                }
+            });
+            
+            // Limpar carrinho
+            const clearCartButton = document.getElementById('clear-cart');
+            if (clearCartButton) {
+                clearCartButton.addEventListener('click', clearCart);
+            }
+            
+            // Finalizar pedido
+            const checkoutButton = document.getElementById('checkout');
+            if (checkoutButton) {
+                checkoutButton.addEventListener('click', checkout);
+            }
+            
+            // Filtro de categorias
+            const categoryFilter = document.getElementById('category-filter');
+            if (categoryFilter) {
+                categoryFilter.addEventListener('change', filterByCategory);
+            }
+            
+            // Busca de produtos
+            const searchInput = document.getElementById('search-input');
+            if (searchInput) {
+                searchInput.addEventListener('input', searchProducts);
+            }
+            
+            // Corrigir imagens quebradas
+            document.querySelectorAll('img').forEach(img => {
+                img.onerror = function() {
+                    this.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><rect width="200" height="200" fill="%23FFCC00"/><text x="50%" y="50%" font-family="Arial" font-size="20" text-anchor="middle" fill="%23000000">Imagem</text></svg>';
+                };
+            });
+        }
 
-'Vinhos': [
- { name: 'Lovatel 750ml', price: 15.90, image: 'https://www.vinicolalovatel.com.br/uploads/fotos_produtos/20231004_f1bec3f4.jpg', promo: true},
- { name: 'Lovatel 1,5l', price: 16.90, image: 'https://www.vinicolalovatel.com.br/uploads/fotos_produtos/20220321_la6558ef.png', promo: true},
- { name: 'Vinho Colonial 1,5l', price: 10.00, image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZXGLUdBvBJMInNyt15sBf1XQxL_4h7QNeMQ&s'},
+        // Adicionar produto ao carrinho
+        function addToCart(id, name, price) {
+            // Verificar se o produto já está no carrinho
+            const existingItem = cart.find(item => item.id === id);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    id: id,
+                    name: name,
+                    price: price,
+                    quantity: 1
+                });
+            }
+            
+            // Salvar carrinho no localStorage
+            saveCartToLocalStorage();
+            
+            // Atualizar contador do carrinho
+            updateCartCount();
+            
+            // Mostrar notificação
+            showNotification(`${name} adicionado ao carrinho!`);
+        }
 
+        // Atualizar contador do carrinho
+        function updateCartCount() {
+            const cartCount = document.getElementById('cart-count');
+            const cartCountButton = document.getElementById('cart-count-button');
+            
+            const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+            
+            if (cartCount) {
+                cartCount.textContent = totalItems;
+            }
+            
+            if (cartCountButton) {
+                cartCountButton.textContent = totalItems;
+            }
+        }
 
-],
-      'Águas': [
-        { name: 'Água sem gás 500ml', price: 1.49, image: 'https://io.convertiez.com.br/m/superpaguemenos/shop/products/images/15890/medium/agua-mineral-crystal-sem-gas-500ml_89544.png' },
-        { name: 'Água Com gás 500ml', price: 1.89, image: 'https://loja.cristalselect.com.br/cdn/shop/files/Prancheta1copiar.jpg?v=1731591790' },
-{ name: 'Água C/ Gás 1.5l', price: 4.99, image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7wWKzlWeJqHCmgFdfxB9baoyP4YpPJCII4w&s',promo: true },
-{ name: 'Água 5L', price: 7.99, image: 'https://carrefourbrfood.vtexassets.com/arquivos/ids/18904690/agua-mineral-sem-gas-crystal-5-litros-1.jpg?v=637590231146570000', promo: true },
+        // Abrir modal do carrinho
+        function openCartModal() {
+            const modal = document.getElementById('cart-modal');
+            if (modal) {
+                renderCartItems();
+                modal.style.display = 'block';
+            }
+        }
 
+        // Fechar modal do carrinho
+        function closeCartModal() {
+            const modal = document.getElementById('cart-modal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
 
-      ],
-'Carvão e Lenha': [
+        // Renderizar itens do carrinho
+        function renderCartItems() {
+            const cartItemsContainer = document.getElementById('cart-items');
+            const cartTotalElement = document.getElementById('cart-total-price');
+            
+            if (!cartItemsContainer || !cartTotalElement) return;
+            
+            cartItemsContainer.innerHTML = '';
+            
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = '<p class="empty-cart">Seu carrinho está vazio</p>';
+                cartTotalElement.textContent = 'R$ 0,00';
+                return;
+            }
+            
+            let total = 0;
+            
+            cart.forEach((item, index) => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                
+                const cartItem = document.createElement('div');
+                cartItem.className = 'cart-item';
+                cartItem.innerHTML = `
+                    <div class="cart-item-info">
+                        <h3>${item.name}</h3>
+                        <p>R$ ${item.price.toFixed(2).replace('.', ',')}</p>
+                    </div>
+                    <div class="cart-item-quantity">
+                        <button class="quantity-btn decrease" data-index="${index}">-</button>
+                        <span>${item.quantity}</span>
+                        <button class="quantity-btn increase" data-index="${index}">+</button>
+                    </div>
+                    <div class="cart-item-price">
+                        R$ ${itemTotal.toFixed(2).replace('.', ',')}
+                    </div>
+                    <button class="remove-item" data-index="${index}">×</button>
+                `;
+                
+                cartItemsContainer.appendChild(cartItem);
+            });
+            
+            cartTotalElement.textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
+            
+            // Adicionar event listeners para os botões de quantidade
+            const decreaseButtons = document.querySelectorAll('.quantity-btn.decrease');
+            const increaseButtons = document.querySelectorAll('.quantity-btn.increase');
+            const removeButtons = document.querySelectorAll('.remove-item');
+            
+            decreaseButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    decreaseQuantity(index);
+                });
+            });
+            
+            increaseButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    increaseQuantity(index);
+                });
+            });
+            
+            removeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    removeItem(index);
+                });
+            });
+        }
 
-{ name: 'Carvão 4kg', price: 25.00, image: 'https://www.imigrantesbebidas.com.br/bebida/images/products/full/66002-carvao-4kg.20230918124343.jpg' },
-{ name: 'Carvão 8kg', price: 30.00, image: 'https://www.imigrantesbebidas.com.br/bebida/images/products/full/66003-carvao-8kg.20230918124556.jpg', promo: true },
-{ name: 'Lenha Pct Grande', price: 30.00, image: 'https://biolenhas.com.br/wp-content/uploads/2021/09/PARA-DEFUMAR-CHURRASCO17.jpg' },
-{ name: '2 Pct Lenha Grande', price: 50.00, image: 'https://biolenhas.com.br/wp-content/uploads/2021/09/PARA-DEFUMAR-CHURRASCO17.jpg', promo: true },
+        // Diminuir quantidade de um item
+        function decreaseQuantity(index) {
+            if (cart[index].quantity > 1) {
+                cart[index].quantity -= 1;
+            } else {
+                cart.splice(index, 1);
+            }
+            
+            saveCartToLocalStorage();
+            updateCartCount();
+            renderCartItems();
+        }
 
+        // Aumentar quantidade de um item
+        function increaseQuantity(index) {
+            cart[index].quantity += 1;
+            
+            saveCartToLocalStorage();
+            updateCartCount();
+            renderCartItems();
+        }
 
- ],
+        // Remover item do carrinho
+        function removeItem(index) {
+            cart.splice(index, 1);
+            
+            saveCartToLocalStorage();
+            updateCartCount();
+            renderCartItems();
+        }
 
-'Vodkas, energéticos e itens básicos para o dia a dia. ': [
-{ name: 'Confira no Whatsapp', price: 0, image: 'https://ibassets.com.br/ib.item.image.large/l-15f9c986cb7747de8e5b52b71f675df4.png', promo: true },
- ],
-    };
+        // Limpar carrinho
+        function clearCart() {
+            cart = [];
+            
+            saveCartToLocalStorage();
+            updateCartCount();
+            renderCartItems();
+            
+            showNotification('Carrinho limpo!');
+        }
 
-    let showPromotionsOnly = false;
-    const catalogEl = document.getElementById('catalog');
-    const cartEl = document.getElementById('cart');
-    const messageEl = document.getElementById('message');
-    const filterEl = document.getElementById('categoryFilter');
-    const searchEl = document.getElementById('searchInput');
-    let cart = [];
+        // Finalizar pedido (enviar para WhatsApp)
+        function checkout() {
+            if (cart.length === 0) {
+                showNotification('Adicione produtos ao carrinho primeiro!', 'error');
+                return;
+            }
+            
+            // Calcular total
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            // Formatar mensagem para WhatsApp
+            let message = '*Novo Pedido - Distribeer Garagem*\n\n';
+            message += '*Itens do Pedido:*\n';
+            
+            cart.forEach(item => {
+                message += `• ${item.quantity}x ${item.name} - R$ ${(item.price * item.quantity).toFixed(2).replace('.', ',')}\n`;
+            });
+            
+            message += '\n*Total: R$ ' + total.toFixed(2).replace('.', ',') + '*\n\n';
+            message += 'Gostaria de confirmar este pedido.';
+            
+            // Número do WhatsApp (use o número da Distribeer Garagem)
+            const phoneNumber = '5551933808238';
+            
+            // Criar URL do WhatsApp
+            const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+            
+            // Abrir WhatsApp em nova janela
+            window.open(whatsappUrl, '_blank');
+            
+            // Limpar carrinho após envio
+            clearCart();
+            closeCartModal();
+        }
 
-    function showMessage(text) {
-      messageEl.innerText = text;
-      messageEl.style.display = 'block';
-      setTimeout(() => messageEl.style.display = 'none', 2000);
-    }
+        // Filtrar por categoria
+        function filterByCategory() {
+            const categoryFilter = document.getElementById('category-filter');
+            const selectedCategory = categoryFilter.value;
+            
+            const allSections = document.querySelectorAll('.product-section');
+            
+            if (selectedCategory === 'all') {
+                // Mostrar todas as seções
+                allSections.forEach(section => {
+                    section.style.display = 'block';
+                });
+            } else {
+                // Mostrar apenas a seção selecionada
+                allSections.forEach(section => {
+                    if (section.id === selectedCategory) {
+                        section.style.display = 'block';
+                    } else {
+                        section.style.display = 'none';
+                    }
+                });
+            }
+        }
 
-    function populateFilter() {
-      for (const category in categories) {
-        const option = document.createElement('option');
-        option.value = category;
-        option.textContent = category;
-        filterEl.appendChild(option);
-      }
-    }
+        // Buscar produtos
+        function searchProducts() {
+            const searchInput = document.getElementById('search-input');
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            
+            if (searchTerm === '') {
+                // Resetar para mostrar todas as seções
+                const allSections = document.querySelectorAll('.product-section');
+                allSections.forEach(section => {
+                    section.style.display = 'block';
+                    
+                    const productCards = section.querySelectorAll('.product-card');
+                    productCards.forEach(card => {
+                        card.style.display = 'block';
+                    });
+                });
+                return;
+            }
+            
+            // Filtrar produtos em todas as seções
+            const allSections = document.querySelectorAll('.product-section');
+            
+            allSections.forEach(section => {
+                let hasVisibleProducts = false;
+                const productCards = section.querySelectorAll('.product-card');
+                
+                productCards.forEach(card => {
+                    const productName = card.querySelector('h3').textContent.toLowerCase();
+                    
+                    if (productName.includes(searchTerm)) {
+                        card.style.display = 'block';
+                        hasVisibleProducts = true;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+                
+                // Mostrar ou esconder a seção inteira
+                section.style.display = hasVisibleProducts ? 'block' : 'none';
+            });
+        }
 
-function renderCatalog(filteredCategory = 'all') {
-  const search = searchEl.value.toLowerCase();
-  catalogEl.innerHTML = '';
-  for (const category in categories) {
-    if (filteredCategory !== 'all' && category !== filteredCategory) continue;
-    const section = document.createElement('div');
-    section.innerHTML = `<h2 style="padding: 0 1rem; margin-top: 2rem;">${category}</h2>
-                         <div class="catalog-grid"></div>`;
-    const grid = section.querySelector('.catalog-grid');
+        // Salvar carrinho no localStorage
+        function saveCartToLocalStorage() {
+            localStorage.setItem('distribeerCart', JSON.stringify(cart));
+        }
 
-    categories[category].forEach((product, index) => {
-      if (showPromotionsOnly && !product.promo) return;
-      if (!product.name.toLowerCase().includes(search)) return;
+        // Carregar carrinho do localStorage
+        function loadCartFromLocalStorage() {
+            const savedCart = localStorage.getItem('distribeerCart');
+            if (savedCart) {
+                cart = JSON.parse(savedCart);
+            }
+        }
 
-      const div = document.createElement('div');
-      div.className = 'product';
-      
-      // Se o produto estiver indisponível, substitui o botão de "Adicionar" por "Indisponível"
-      const buttonHTML = product.unavailable
-        ? `<button style="background: #ccc; cursor: not-allowed;" disabled>Indisponível</button>`
-        : `<button onclick="addToCartFromCategory('${category}', ${index})">Adicionar</button>`;
-      
-      div.innerHTML = `
-        ${product.promo ? '<div class="promo-badge">Promoção</div>' : ''}
-        <img src="${product.image}" alt="${product.name}" />
-        <h3>${product.name}</h3>
-        <p>R$ ${product.price.toFixed(2).replace('.', ',')}</p>
-        ${buttonHTML}
-      `;
-      
-      grid.appendChild(div);
-    });
+        // Mostrar notificação
+        function showNotification(message, type = 'success') {
+            // Verificar se já existe uma notificação
+            let notification = document.querySelector('.notification');
+            
+            if (notification) {
+                // Remover notificação existente
+                notification.remove();
+            }
+            
+            // Criar nova notificação
+            notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            
+            // Adicionar ao body
+            document.body.appendChild(notification);
+            
+            // Mostrar notificação
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 10);
+            
+            // Remover notificação após 3 segundos
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 3000);
+        }
 
-    if (grid.children.length > 0) catalogEl.appendChild(section);
-  }
-}
-
-
-
-
-    function togglePromotions() {
-      showPromotionsOnly = !showPromotionsOnly;
-      const btn = document.getElementById('promoBtn');
-      if (showPromotionsOnly) {
-        btn.textContent = 'Ver Tudo';
-        btn.style.background = 'black';
-        btn.style.color = 'white';
-      } else {
-        btn.textContent = 'Ver Promoções';
-        btn.style.background = 'red';
-        btn.style.color = 'white';
-      }
-      renderCatalog(filterEl.value);
-    }
-
-    function addToCartFromCategory(category, index) {
-      const product = categories[category][index];
-      const existing = cart.find(item => item.name === product.name);
-      if (existing) {
-        existing.qty++;
-      } else {
-        cart.push({ ...product, qty: 1 });
-      }
-      updateCartUI();
-      showMessage("Produto adicionado com sucesso!");
-    }
-
-    function removeFromCart(index) {
-      cart.splice(index, 1);
-      updateCartUI();
-      showMessage("Item removido do carrinho!");
-    }
-
-    // Função para atualizar o carrinho
-  function updateCartUI() {
-    if (cart.length === 0) {
-      cartEl.classList.remove('expanded');
-      cartEl.innerHTML = '<span id="cartIcon">🛒</span>';
-      return;
-    }
-
-
-    cartEl.classList.add('expanded');
-    let html = '<h2>Carrinho</h2><ul>';
-    let total = 0;
-    cart.forEach((item, index) => {
-      html += `<li>
-        ${item.name} 
-        <input type="number" value="${item.qty}" min="1" style="width: 40px; margin-left: 10px;" 
-          onchange="updateQuantity(${index}, this.value)" />
-        - R$ ${(item.price * item.qty).toFixed(2).replace('.', ',')}
-        <button onclick="removeFromCart(${index})" style="margin-left:8px;color:red;background:none;border:none;cursor:pointer;">✖</button>
-      </li>`;
-      total += item.price * item.qty;
-    });
-    html += `</ul><div class="total">Total: R$ ${total.toFixed(2).replace('.', ',')}</div>`;
-    html += `<button class="whatsapp-btn" onclick="finalizePurchase()">Finalizar no WhatsApp</button>`;
-    html += `<div style="margin-top:10px; background:#fff8a3; padding:10px; border-radius:6px; font-size:0.9rem; text-align:center;">
-      <strong>Delivery:</strong><br/>
-      Frete grátis para o bairro Moradas da Hípica em pedidos acima de R$30,00.<br/>
-      Para os demais bairros, consulte pelo Whatsapp.
-    </div>`;
-    cartEl.innerHTML = html;
-  }
-
-
-function updateQuantity(index, newQty) {
-    const newQuantity = parseInt(newQty);
-    if (isNaN(newQuantity) || newQuantity < 1) return; // Se a quantidade for inválida, não faz nada
-    cart[index].qty = newQuantity;
-    updateCartUI();
-  }
-
-
-    function finalizePurchase() {
-      const text = cart.map(item => `${item.name} x${item.qty}`).join('%0A');
-      const total = cart.reduce((acc, item) => acc + item.price * item.qty, 0).toFixed(2);
-      const url = `https://wa.me/5551933808238?text=Olá! Gostaria de pedir:%0A${text}%0A%0ATotal: R$ ${total.replace('.', ',')}`;
-      window.open(url, '_blank');
-    }
-
-    function filterCatalog() {
-      renderCatalog(filterEl.value);
-    }
-
-    populateFilter();
-    renderCatalog();
-  </script>
+        // Adicionar botão de rolagem para o topo
+        window.addEventListener('scroll', function() {
+            let scrollTopButton = document.querySelector('.scroll-top');
+            
+            if (!scrollTopButton) {
+                scrollTopButton = document.createElement('div');
+                scrollTopButton.className = 'scroll-top';
+                scrollTopButton.innerHTML = '<i class="fas fa-arrow-up"></i>';
+                scrollTopButton.addEventListener('click', function() {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+                document.body.appendChild(scrollTopButton);
+            }
+            
+            if (window.scrollY > 300) {
+                scrollTopButton.classList.add('visible');
+            } else {
+                scrollTopButton.classList.remove('visible');
+            }
+        });
+    </script>
 </body>
 </html>
